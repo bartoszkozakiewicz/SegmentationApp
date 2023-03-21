@@ -16,21 +16,41 @@
             display: flex;
             align-content: space-around;
         }
+        
         #image_sec,
         #video_sec
         {
             display:grid;
             width:50%;
-            justify-content: space-around;
+            justify-content: space-evenly;
+            text-align:justify ;
         }
+        
+       #segmentowane,
+       #oryginalne
+       {
+           display:grid;
+           width:50%;
+           justify-content: space-between;
+           text-align: center;
+           margin: 10px;
+       }
+       
         h3
         {
             font-size: 30px;
             text-align: center;
             font-style: italic;
         }
-        header{
+        header,
+        .input
+        {
             margin: 0 auto 0 auto;
+        }
+        #img
+        {
+        display: flex;
+        align-content: space-around;
         }
 
     </style>
@@ -44,7 +64,7 @@
     
     </header>
     <main>
-        <div id = "image_sec">
+        <div id="image_sec">
 
             <div class="input">
                 <h2>Segmentacja zdjęć</h2>
@@ -58,21 +78,30 @@
                     <input type="submit" name="submit" value="Submit">
                     </p>
                 </form>
+                
             </div>
-
-            <p style="color:rgb(0, 0, 0);">
-                {% with messages = get_flashed_messages() %}
-                  {% if messages %}
-                  
-                <img src="{{ messages[0] }}" width="256", height="256">
-            
-                  {% endif %}
-                {% endwith %}
-            </p>
+            <div id="img">
+                <div id="oryginalne" >
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                    <h4>Oryginalne zdjęcie:</h4>  
+                    <img src="{{ messages[0] }}" width="256", height="256">
+                      {% endif %}
+                    {% endwith %}
+                </div>
+                <div id="segmentowane" >
+                   {% with messages = get_flashed_messages() %}
+                     {% if messages %}
+                   <h4>Zdjęcie po segmentacji:</h4>  
+                   <img src="{{ messages[1] }}" width="256", height="256"> 
+                     {% endif %}
+                   {% endwith %}
+                </div>
+            </div>
 
         </div>
     
-        <div id = "video_sec">
+        <div id="video_sec">
             <div class="input">
                 <h2>Segmentacja wideo</h2>
                 <form method="post" action="/" enctype="multipart/form-data">

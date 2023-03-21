@@ -3,7 +3,8 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import numpy as np
 import matplotlib.image as mpimg
-
+from PIL import Image as im
+import random
 from collections import namedtuple
 
 #--------------------------------------------------------------------------------
@@ -116,5 +117,8 @@ def img_segmentation(filename):
         for col in range(prediction.shape[1]):
             decoded_mask[row,col,:] = id2color[prediction[row,col]]
             decoded_mask = decoded_mask.astype("uint8")    
-            
-    return decoded_mask
+    decoded_mask = im.fromarray(decoded_mask)
+    x = random.randint(0,10)    
+    decoded_mask.save(f'static/img_vid/{x}seg.jpg')
+    return x
+      

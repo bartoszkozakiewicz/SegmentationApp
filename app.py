@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from flask import Flask, render_template, request, redirect, flash
+from flask import Flask, render_template, request, redirect, flash, get_flashed_messages
 import os
 from werkzeug.utils import secure_filename
 from main import img_segmentation
@@ -16,6 +16,11 @@ app.secret_key = "segmentacja123"
 
 #Folder for app used to save images/videos from user
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["TEMPLATES_AUTO_RELOAD"] = True
+
+def cleanup(filename):
+    os.system(f"rm {filename}/*")
+    
 
 # '/' - is root directory, when getting into - looks for templates folder - get index.html
 @app.route('/')
@@ -30,7 +35,7 @@ def submit_image():
             flash('No file part')
             return redirect(request.url)
         
-        file = request.files['file'] # Take file given by user
+        file = request.files['file'] # Take file given by use
         if file.filename == '':
             flash('No file selected for uploading')
             return redirect(request.url)
@@ -39,11 +44,13 @@ def submit_image():
             filename = secure_filename(file.filename)  #Use this werkzeug method to secure filename. 
             file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
             #Make prediction
-            pred_img = img_segmentation(filename)
+            x = img_segmentation(filename)
             
             full_filename = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             flash(full_filename)#Send original image to web app
-            #flash(pred_img)#Send segmented image to web app
+            flash(f'static/img_vid/{x}seg.jpg')#'static/img_vid/seg.jpg'
+            cleanup(os.path.join(app.config['UPLOAD_FOLDER'])
+
             return redirect('/')
             
 if __name__ == "__main__":
