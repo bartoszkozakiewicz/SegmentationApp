@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Make it compatible to mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Segmentacja Ruchu Ulicznego</title>
+    <style>
+        body
+        {
+            background-image: url('static/tlo.jpg');
+            background-repeat: no-repeat;
+        }
+        main
+        {
+            display: flex;
+            align-content: space-around;
+        }
+        #image_sec,
+        #video_sec
+        {
+            display:grid;
+            width:50%;
+            justify-content: space-around;
+        }
+        h3
+        {
+            font-size: 30px;
+            text-align: center;
+            font-style: italic;
+        }
+        header{
+            margin: 0 auto 0 auto;
+        }
+
+    </style>
+
+
+</head>
+
+<body>
+    <header> 
+        <h3>SEGMENTACJA RUCHU ULICZNEGO</h3>
+    
+    </header>
+    <main>
+        <div id = "image_sec">
+
+            <div class="input">
+                <h2>Segmentacja zdjęć</h2>
+                <form method="post" action="/" enctype="multipart/form-data">
+                    <dl>
+                    <p style="color:rgb(0, 0, 0);">
+                        <input type="file" name="file" autocomplete="off" required>
+                    </p>
+                    </dl>
+                    <p style="color:rgb(0, 0, 0);">
+                    <input type="submit" name="submit" value="Submit">
+                    </p>
+                </form>
+            </div>
+
+            <p style="color:rgb(0, 0, 0);">
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                  
+                <img src="{{ messages[0] }}" width="256", height="256">
+            
+                  {% endif %}
+                {% endwith %}
+            </p>
+
+        </div>
+    
+        <div id = "video_sec">
+            <div class="input">
+                <h2>Segmentacja wideo</h2>
+                <form method="post" action="/" enctype="multipart/form-data">
+                    <dl>
+                    <p style="color:rgb(0, 0, 0);">
+                        <input type="file" name="file" autocomplete="off" required>
+                    </p>
+                    </dl>
+                    <p style="color:rgb(0, 0, 0);">
+                    <input type="submit" name="submit" value="Submit">
+                    </p>
+                </form>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>
