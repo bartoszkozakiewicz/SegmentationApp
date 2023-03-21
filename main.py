@@ -94,14 +94,13 @@ labels = [
 
 id2color = { label.id : np.asarray(label.color) for label in labels }
 
-def img_segmentation(filename):
+def img_segmentation(filename,path):
 
     #Load models
     unet_model = load_model("model/UNETD15P5.h5")
     
     #Image preprocessing - for prediction
-    img_path = 'static/img_vid/' + filename
-    img = mpimg.imread(img_path)
+    img = mpimg.imread(path+filename)
     img = tf.image.resize(img,[256,256])
     img = tf.cast(img,tf.float32)
     img = img/255.
@@ -117,8 +116,5 @@ def img_segmentation(filename):
         for col in range(prediction.shape[1]):
             decoded_mask[row,col,:] = id2color[prediction[row,col]]
             decoded_mask = decoded_mask.astype("uint8")    
-    decoded_mask = im.fromarray(decoded_mask)
-    x = random.randint(0,10)    
-    decoded_mask.save(f'static/img_vid/{x}seg.jpg')
-    return x
-      
+    decoded_mask = im.fromarray(decoded_mask)   
+    decoded_mask.save(f'{path}seg-{filename}.jpg')

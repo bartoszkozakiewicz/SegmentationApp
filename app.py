@@ -18,14 +18,22 @@ app.secret_key = "segmentacja123"
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-def cleanup(filename):
-    os.system(f"rm {filename}/*")
-    
+def cleanup(path):
+    filesArray = os.listdir(path)
+    for file in filesArray:
+        os.remove(path+file)
 
 # '/' - is root directory, when getting into - looks for templates folder - get index.html
 @app.route('/')
 def index():
     return render_template('index.html')#,user_image="templates/tlo.jpg"
+
+
+@app.route('/cleanup')
+def cl():
+    cleanup(app.config['UPLOAD_FOLDER'])
+    return redirect('/')#,user_image="templates/tlo.jpg"
+
 
 #Function to take submissions
 @app.route('/',methods=['POST'])
@@ -42,15 +50,14 @@ def submit_image():
         if file:
             #Take file and save it
             filename = secure_filename(file.filename)  #Use this werkzeug method to secure filename. 
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-            #Make prediction
-            x = img_segmentation(filename)
-            
             full_filename = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+            file.save(full_filename)
+            #Make prediction
+            img_segmentation(filename,app.config['UPLOAD_FOLDER'])
+            
             flash(full_filename)#Send original image to web app
-            flash(f'static/img_vid/{x}seg.jpg')#'static/img_vid/seg.jpg'
-            cleanup(os.path.join(app.config['UPLOAD_FOLDER'])
-
+            flash(f'{app.config["UPLOAD_FOLDER"]}seg-{filename}.jpg')#'static/img_vid/seg.jpg'
+            
             return redirect('/')
             
 if __name__ == "__main__":
