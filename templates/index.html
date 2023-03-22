@@ -47,7 +47,8 @@
         {
             margin: 0 auto 0 auto;
         }
-        #img
+        #img,
+        #video
         {
         display: flex;
         align-content: space-around;
@@ -68,7 +69,7 @@
 
             <div class="input">
                 <h2>Segmentacja zdjęć</h2>
-                <form method="post" action="/" enctype="multipart/form-data">
+                <form method="post" action="/img" enctype="multipart/form-data">
                     <dl>
                     <p style="color:rgb(0, 0, 0);">
                         <input type="file" name="file" autocomplete="off" required>
@@ -82,18 +83,26 @@
             </div>
             <div id="img">
                 <div id="oryginalne" >
-                    {% with messages = get_flashed_messages() %}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
                       {% if messages %}
-                    <h4>Oryginalne zdjęcie:</h4>  
-                    <img src="{{ messages[0] }}" width="256", height="256">
+                        {% for category, message in messages %}                      
+                         {% if category == "img" %}
+                              <h4>Oryginalne zdjęcie:</h4>  
+                              <img src="{{ messages[0][1] }}" width="256", height="256">                       
+                         {% endif %}
+                        {% endfor %}                           
                       {% endif %}
                     {% endwith %}
                 </div>
                 <div id="segmentowane" >
-                   {% with messages = get_flashed_messages() %}
+                   {% with messages = get_flashed_messages(with_categories=true) %}
                      {% if messages %}
+                        {% for category, message in messages %}
+                         {% if category == "seg" %}                     
                    <h4>Zdjęcie po segmentacji:</h4>  
-                   <img src="{{ messages[1] }}" width="256", height="256"> 
+                   <img src="{{ messages[1][1] }}" width="256", height="256"> 
+                         {% endif %}
+                        {% endfor %}                   
                      {% endif %}
                    {% endwith %}
                 </div>
@@ -104,7 +113,7 @@
         <div id="video_sec">
             <div class="input">
                 <h2>Segmentacja wideo</h2>
-                <form method="post" action="/" enctype="multipart/form-data">
+                <form method="post" action="/video" enctype="multipart/form-data">
                     <dl>
                     <p style="color:rgb(0, 0, 0);">
                         <input type="file" name="file" autocomplete="off" required>
@@ -115,6 +124,33 @@
                     </p>
                 </form>
             </div>
+            <div id="video">
+                <div id="oryginalne" >
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                         {% if category == "video" %}                               
+                    <h4>Oryginalne wideo:</h4>  
+                    <video src="{{ messages[0] }}" width="256", height="256" controls>
+                         {% endif %}
+                        {% endfor %}                      
+                      {% endif %}
+                    {% endwith %}
+                </div>
+                <div id="segmentowane" >
+                   {% with messages = get_flashed_messages(with_categories=true) %}
+                     {% if messages %}
+                        {% for category, message in messages %}
+                         {% if category == "video_seg" %}                              
+                   <h4>Wideo po segmentacji:</h4>  
+                    <video src="{{ messages[1] }}" width="256", height="256" controls>
+                         {% endif %}
+                        {% endfor %}                      
+                     {% endif %}
+                   {% endwith %}
+                </div>
+            </div>            
+        
         </div>
     </main>
 </body>

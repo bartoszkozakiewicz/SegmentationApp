@@ -6,6 +6,7 @@ import matplotlib.image as mpimg
 from PIL import Image as im
 import random
 from collections import namedtuple
+import cv2
 
 #--------------------------------------------------------------------------------
 # Definitions
@@ -94,10 +95,15 @@ labels = [
 
 id2color = { label.id : np.asarray(label.color) for label in labels }
 
+
+
+#Load models
+unet_model = load_model("model/UNETD15P5.h5")
+
+
+#IMAGES SEGMENTATION
 def img_segmentation(filename,path):
 
-    #Load models
-    unet_model = load_model("model/UNETD15P5.h5")
     
     #Image preprocessing - for prediction
     img = mpimg.imread(path+filename)
@@ -118,3 +124,72 @@ def img_segmentation(filename,path):
             decoded_mask = decoded_mask.astype("uint8")    
     decoded_mask = im.fromarray(decoded_mask)   
     decoded_mask.save(f'{path}seg-{filename}.jpg')
+
+
+#VIDEO SEGMENTATION
+
+def preprocess_img(image):
+  #img = tf.image.resize(img, [img_size,img_size])
+  img = tf.cast(image,tf.float32)
+  img = img/255.0
+  return img
+
+#CAPTURE VIDEO
+def get_frames(video):
+  frames = []
+  # Open the video file
+  video_capture = cv2.VideoCapture(video)
+  # Check if the video file was opened successfully
+  if not video_capture.isOpened():
+      print('Error opening video file')
+      exit()
+
+  # Initialize frame counter
+  frame_count = 0
+  # Loop through the video frames
+  while True:
+      # Read the next frame from the video
+      success, frame = video_capture.read()
+      # Check if the frame was read successfully
+      if not success:
+          break
+      frame_count+=1
+      filename = f'frame_{frame_count}.jpg'
+      cv2.imwrite(filename, frame)    
+      frames.append(filename)
+    
+  return frames
+
+#MAKE PREDICTIONS ON FRAMES FROM VIDEO
+def eval_video(frames):
+  images=[]
+  decoded_frames=[]
+  #Make predicted images (each frame from video)
+  for img in frames:
+    frame = mpimg.imread(img)
+    frame = tf.image.resize(frame,[256,256])
+    images.append(frame)
+  eval_frames = tf.data.Dataset.from_tensor_slices(images)
+  eval_frames = eval_frames.map(map_func=preprocess_img,num_parallel_calls=tf.data.AUTOTUNE).batch(batch_size=10).prefetch(tf.data.AUTOTUNE)
+  pred_frames = unet_model.predict(eval_frames)
+  decoded_mask = np.zeros([pred_frames[0].shape[0],pred_frames[0].shape[1],3])
+  for pred in pred_frames:
+    pred = np.squeeze(np.argmax(pred,axis=-1))
+    for row in range(pred.shape[0]):
+        for col in range(pred.shape[1]):
+            decoded_mask[row,col,:] = id2color[pred[row,col]]
+            decoded_mask = decoded_mask.astype("uint8")
+    decoded_frames.append(decoded_mask)  
+  return decoded_frames
+
+#CONVERT BACK TO VIDEO
+def vid_conv(images,filename,path):
+  fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+  fps=30
+
+  vid = cv2.VideoWriter(f'{path}seg-{filename}.mp4',fourcc,fps,(256,256))
+  for frame in images:
+    vid.write(frame)
+  cv2.destroyAllWindows()
+  vid.release()
+

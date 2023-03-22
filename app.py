@@ -3,7 +3,7 @@
 from flask import Flask, render_template, request, redirect, flash, get_flashed_messages
 import os
 from werkzeug.utils import secure_filename
-from main import img_segmentation
+from main import img_segmentation, get_frames, eval_video, vid_conv
 
 #Path to save images/videos
 UPLOAD_FOLDER = "static/img_vid/"
@@ -36,7 +36,7 @@ def cl():
 
 
 #Function to take submissions
-@app.route('/',methods=['POST'])
+@app.route('/img',methods=['POST'])
 def submit_image():
     if request.method == 'POST':
         if 'file' not in request.files:
@@ -55,10 +55,37 @@ def submit_image():
             #Make prediction
             img_segmentation(filename,app.config['UPLOAD_FOLDER'])
             
-            flash(full_filename)#Send original image to web app
-            flash(f'{app.config["UPLOAD_FOLDER"]}seg-{filename}.jpg')#'static/img_vid/seg.jpg'
+            flash(full_filename, 'img')#Send original image to web app
+            flash(f'{app.config["UPLOAD_FOLDER"]}seg-{filename}.jpg', 'seg')#'static/img_vid/seg.jpg'
             
             return redirect('/')
+        
+@app.route('/video',methods=['POST'])
+def submit_video():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        
+        file = request.files['file'] # Take file given by use
+        if file.filename == '':
+            flash('No file selected for uploading')
+            return redirect(request.url)
+        if file:
+            #Take file and save it
+            filename = secure_filename(file.filename)  #Use this werkzeug method to secure filename. 
+            full_filename = os.path.join(app.config['UPLOAD_FOLDER'],filename)
+            file.save(full_filename)
+            
+            #Make prediction
+            frames2 = get_frames(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+            pred_images2 = eval_video(frames2)
+            vid_conv(pred_images2, filename,app.config['UPLOAD_FOLDER'])
+            
+            flash(full_filename, 'video')#Send original video to web app
+            flash(f'{app.config["UPLOAD_FOLDER"]}seg-{filename}.mp4', 'video_seg')
+            
+            return redirect('/')        
             
 if __name__ == "__main__":
     app.run()
