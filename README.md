@@ -7,6 +7,9 @@ There are 2 models used:
 
 Example results of deeplabv3-mobilenetv3 model
 - Original
+
 ![image](https://user-images.githubusercontent.com/105235140/235952311-53b00472-74dc-4a03-97c3-a07ff8735333.png)
+
 - Segmented
+
 ![image](https://user-images.githubusercontent.com/105235140/235952445-e5870c51-30cd-4dd8-830e-8438ad1be458.png)
