@@ -1,5 +1,5 @@
 # SegmentationApp
-Web application for Traffic Segmentation. Models are deployed with a usage of Flask. The apps gives opportunity to segment images as well as videos. There are to sections each for other task.
+Web application for Traffic Segmentation. Models are deployed with a usage of Flask. The apps gives opportunity to segment images as well as videos. There are 2 sections each for other task.
 
 There are 2 models used:
 - Unet: Created from scratch, as a baseline
