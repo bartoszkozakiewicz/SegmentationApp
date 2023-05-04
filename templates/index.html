@@ -42,6 +42,12 @@
             text-align: center;
             font-style: italic;
         }
+        h5
+        {
+            font-size: 18px;
+            text-align: center;
+            font-style: italic;
+        }
         header,
         .input
         {
@@ -53,6 +59,12 @@
         display: flex;
         align-content: space-around;
         }
+        
+        select
+        {
+          display: block;
+          margin: 0 auto;
+        }
 
     </style>
 
@@ -62,10 +74,19 @@
 <body>
     <header> 
         <h3>SEGMENTACJA RUCHU ULICZNEGO</h3>
-    
+                <h5>Wybierz model, który chcesz użyć do segmentacji:</h5>
+                <form method="post"action="/">
+                    <select name="model">
+                         <option value="model1">Model 1UNET-model</option>
+                         <option value="model2">DeepLab-model</option>
+                         <option value="model3">DeepLab-lepszy model</option>
+                    </select>  
+                    <input type="submit" name = "wybor_modelu" value="Zatwierdź" style="display: block; margin: 10px auto 0;">>  
+                </form>    
     </header>
     <main>
         <div id="image_sec">
+
 
             <div class="input">
                 <h2>Segmentacja zdjęć</h2>
@@ -76,11 +97,14 @@
                     </p>
                     </dl>
                     <p style="color:rgb(0, 0, 0);">
-                    <input type="submit" name="submit" value="Submit">
-                    </p>
+                    <input type="submit" name="submit" value="Zatwierdź">
+                    </p> 
                 </form>
+                 
                 
             </div>
+            
+            
             <div id="img">
                 <div id="oryginalne" >
                     {% with messages = get_flashed_messages(with_categories=true) %}
@@ -120,7 +144,7 @@
                     </p>
                     </dl>
                     <p style="color:rgb(0, 0, 0);">
-                    <input type="submit" name="submit" value="Submit">
+                    <input type="submit" name="submit" value="Zatwierdź">
                     </p>
                 </form>
             </div>
