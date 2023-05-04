@@ -4,9 +4,10 @@ Web application for Traffic Segmentation. Models are deployed with a usage of Fl
 ![image](https://user-images.githubusercontent.com/105235140/236350592-218f5bba-8c64-4efc-8c62-31141b6bc602.png)
 
 
-There are 2 models used:
+There are 3 models used, those are from: DeepLearning/CityScapesSegmentation.:
 - Unet: Created from scratch, as a baseline
-- Pretrained deeplabv3-mobilenetv3
+- Pretrained xception71_dpc_cityscapes
+- Pretrained xception65_cityscapes
 
 Example results of deeplabv3-mobilenetv3 model
 - Original
