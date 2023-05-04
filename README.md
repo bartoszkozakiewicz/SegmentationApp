@@ -9,7 +9,7 @@ There are 3 models used, those are from: DeepLearning/CityScapesSegmentation.:
 - Pretrained xception71_dpc_cityscapes
 - Pretrained xception65_cityscapes
 
-Example results of deeplabv3-mobilenetv3 model
+Example results of xception71_dpc_cityscapes model
 - Original
 
 ![image](https://user-images.githubusercontent.com/105235140/235952311-53b00472-74dc-4a03-97c3-a07ff8735333.png)
