@@ -7,6 +7,7 @@ from PIL import Image as im
 import random
 from collections import namedtuple
 import cv2
+from model_addons import label_to_color_image,DeepLabModel
 
 #--------------------------------------------------------------------------------
 # Definitions
@@ -98,7 +99,7 @@ id2color = { label.id : np.asarray(label.color) for label in labels }
 
 
 #Load models
-unet_model = load_model("model/UNETD15P5.h5")
+unet_model = load_model("model/UNETD15P5.h5", compile=False)
 
 
 #IMAGES SEGMENTATION
@@ -181,6 +182,19 @@ def eval_video(frames):
             decoded_mask = decoded_mask.astype("uint8")
     decoded_frames.append(decoded_mask)  
   return decoded_frames
+
+
+def eval_video_2(frames,model):
+  images=[]
+  #Make predicted images (each frame from video)
+  for frame in frames:
+    image = im.open(frame)
+    resized_im, seg_map = model.run2(image)
+    seg_image = label_to_color_image(seg_map).astype(np.uint8)
+    seg_image = cv2.addWeighted(np.array(resized_im), 0.6, seg_image, 0.9, 0.0)
+    images.append(seg_image)
+  return images
+
 
 #CONVERT BACK TO VIDEO
 def vid_conv(images,filename,path):

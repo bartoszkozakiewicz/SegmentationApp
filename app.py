@@ -1,12 +1,33 @@
 # -*- coding: utf-8 -*-
-
+import tensorflow as tf
 from flask import Flask, render_template, request, redirect, flash, get_flashed_messages
 import os
 from werkzeug.utils import secure_filename
-from main import img_segmentation, get_frames, eval_video, vid_conv
-from model_addons import DeepLabModel, label_to_color_image, MODEL1, MODEL2
+from main import img_segmentation, get_frames, eval_video, vid_conv,eval_video_2
+from model_addons import DeepLabModel, label_to_color_image, MODEL1, MODEL2, MODEL3
 from PIL import Image
 import numpy as np
+import cv2
+import keras
+
+#tf.keras.utils.set_random_seed(1)
+#tf.config.experimental.enable_op_determinism()
+
+#Some configurations
+#config = tf.compat.v1.ConfigProto()
+#config.gpu_options.per_process_gpu_memory_fraction=0.4
+#config.gpu_options.allow_growth=True
+#sess = tf.compat.v1.Session(config=config) 
+
+#tf.compat.v1.keras.backend.set_session(sess)
+
+# Ustalenie limitu RAM-u, który chcesz wykorzystać na GPU (np. 90%)
+#ram_limit = 0.9
+# Konfiguracja podziału zasobów
+#physical_devices = tf.config.list_physical_devices('GPU')
+#if len(physical_devices) > 0:
+#    gpu = physical_devices[0]
+#    tf.config.set_logical_device_configuration(gpu,[tf.config.LogicalDeviceConfiguration(memory_limit=int(ram_limit * gpu.memory_limit))])
 
 #Path to save images/videos
 UPLOAD_FOLDER = "static/img_vid/"
@@ -87,6 +108,9 @@ def submit_image():
                 image = Image.open(full_filename)
                 resized_im, seg_map = MODEL2.run(image)
                 seg_image = label_to_color_image(seg_map).astype(np.uint8)
+                blended = cv2.addWeighted(np.array(resized_im), 0.6, seg_image, 0.9, 0.0)
+                blended = Image.fromarray(blended)  
+                blended.save(f'{app.config["UPLOAD_FOLDER"]}seg-model2-{filename}.jpg')
                 
                 flash(full_filename, 'img')#Send original image to web app
                 flash(f'{app.config["UPLOAD_FOLDER"]}seg-model2-{filename}.jpg', 'seg')#'static/img_vid/seg.jpg
@@ -97,6 +121,10 @@ def submit_image():
                 image = Image.open(full_filename)
                 resized_im, seg_map = MODEL1.run(image)
                 seg_image = label_to_color_image(seg_map).astype(np.uint8)
+                blended = cv2.addWeighted(np.array(resized_im), 0.6, seg_image, 0.9, 0.0)
+                blended = Image.fromarray(blended)  
+                blended.save(f'{app.config["UPLOAD_FOLDER"]}seg-model3-{filename}.jpg')
+   
                 
                 flash(full_filename, 'img')#Send original image to web app
                 flash(f'{app.config["UPLOAD_FOLDER"]}seg-model3-{filename}.jpg', 'seg')#'static/img_vid/seg.jpg
@@ -104,6 +132,8 @@ def submit_image():
             
 @app.route('/video',methods=['POST'])
 def submit_video():
+    global model_name 
+    
     if request.method == 'POST':
         if 'file' not in request.files:
             flash('No file part')
@@ -119,15 +149,26 @@ def submit_video():
             full_filename = os.path.join(app.config['UPLOAD_FOLDER'],filename)
             file.save(full_filename)
             
-            #Make prediction
-            frames2 = get_frames(os.path.join(app.config['UPLOAD_FOLDER'],filename))
-            pred_images2 = eval_video(frames2)
-            vid_conv(pred_images2, filename,app.config['UPLOAD_FOLDER'])
+            if model_name == "model1":
+                #Make prediction
+                frames2 = get_frames(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+                pred_images2 = eval_video(frames2)
+                vid_conv(pred_images2, filename,app.config['UPLOAD_FOLDER'])
+                
+                flash(full_filename, 'video')#Send original video to web app
+                flash(f'{app.config["UPLOAD_FOLDER"]}seg-{filename}.mp4', 'video_seg')
+                
+                return redirect('/')   
             
-            flash(full_filename, 'video')#Send original video to web app
-            flash(f'{app.config["UPLOAD_FOLDER"]}seg-{filename}.mp4', 'video_seg')
-            
-            return redirect('/')        
-            
+            else:
+                frames2 = get_frames(os.path.join(app.config['UPLOAD_FOLDER'],filename))
+                pred_images2 = eval_video_2(frames2,MODEL2)
+                vid_conv(pred_images2,filename,app.config['UPLOAD_FOLDER'])
+                
+                flash(full_filename, 'video')#Send original video to web app
+                flash(f'{app.config["UPLOAD_FOLDER"]}seg-mob-{filename}.mp4', 'video_seg')
+                
+                return redirect('/')  
+                
 if __name__ == "__main__":
     app.run()

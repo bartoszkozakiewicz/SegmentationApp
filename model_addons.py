@@ -59,6 +59,26 @@ class DeepLabModel(object):
     seg_map = batch_seg_map[0]
     return resized_image, seg_map
 
+  def run2(self, image):
+    """Runs inference on a single image.
+
+    Args:
+      image: A PIL.Image object, raw input image.
+
+    Returns:
+      resized_image: RGB image resized from original input image.
+      seg_map: Segmentation map of `resized_image`.
+    """
+    width, height = image.size
+    resize_ratio = 1.0 * self.INPUT_SIZE / max(width, height)
+    target_size = (int(resize_ratio * width), int(resize_ratio * height))
+    resized_image = image.convert('RGB').resize((256,256), Image.ANTIALIAS)
+    batch_seg_map = self.sess.run(
+        self.OUTPUT_TENSOR_NAME,
+        feed_dict={self.INPUT_TENSOR_NAME: [np.asarray(resized_image)]})
+    seg_map = batch_seg_map[0]
+    return resized_image, seg_map
+
 
 def create_cityscapes_label_colormap():
   """Creates a label colormap used in CITYSCAPES segmentation benchmark.
@@ -113,5 +133,6 @@ def label_to_color_image(label):
 
   return colormap[label]
 
-MODEL1 = DeepLabModel("deeplab_cityscapes_xception71_trainvalfine_2018_09_08.tar.gz") #lepszy
-MODEL2 = DeepLabModel("deeplabv3_cityscapes_train_2018_02_06.tar.gz")
+MODEL1 = DeepLabModel("model/deeplab_mnv3_large_cityscapes_trainfine_2019_11_15.tar.gz") #Mobilnet
+MODEL2 = DeepLabModel("model/deeplabv3_cityscapes_train_2018_02_06.tar.gz")#Xception_weak
+MODEL3 = DeepLabModel("model/deeplab_cityscapes_xception71_trainvalfine_2018_09_08.tar.gz")#Xcep71

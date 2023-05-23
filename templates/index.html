@@ -78,8 +78,8 @@
                 <form method="post"action="/">
                     <select name="model">
                          <option value="model1">Model 1UNET-model</option>
-                         <option value="model2">DeepLab-model</option>
-                         <option value="model3">DeepLab-lepszy model</option>
+                         <option value="model2">DeepLab-Xception</option>
+                         <option value="model3">DeepLab-Mobilnet</option>
                     </select>  
                     <input type="submit" name = "wybor_modelu" value="Zatwierdź" style="display: block; margin: 10px auto 0;">>  
                 </form>    
@@ -155,7 +155,7 @@
                         {% for category, message in messages %}
                          {% if category == "video" %}                               
                     <h4>Oryginalne wideo:</h4>  
-                    <video src="{{ messages[0] }}" width="256", height="256" controls>
+                    <video src="{{ messages[0][1] }}" width="256", height="256" controls>
                          {% endif %}
                         {% endfor %}                      
                       {% endif %}
@@ -167,7 +167,7 @@
                         {% for category, message in messages %}
                          {% if category == "video_seg" %}                              
                    <h4>Wideo po segmentacji:</h4>  
-                    <video src="{{ messages[1] }}" width="256", height="256" controls>
+                    <video src="{{ messages[1][1] }}" width="256", height="256" controls>
                          {% endif %}
                         {% endfor %}                      
                      {% endif %}
