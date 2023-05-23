@@ -1,11 +1,15 @@
 # SegmentationApp
 Web application for Traffic Segmentation. Models are deployed with a usage of Flask. The apps gives opportunity to segment images as well as videos. There are 2 sections each for other task.
 
-There are 2 models used:
-- Unet: Created from scratch, as a baseline
-- Pretrained deeplabv3-mobilenetv3
+![image](https://user-images.githubusercontent.com/105235140/236350592-218f5bba-8c64-4efc-8c62-31141b6bc602.png)
 
-Example results of deeplabv3-mobilenetv3 model
+
+There are 3 models used, those are from: DeepLearning/CityScapesSegmentation.:
+- Unet: Created from scratch, as a baseline
+- Pretrained xception71_dpc_cityscapes
+- Pretrained xception65_cityscapes
+
+Example results of xception71_dpc_cityscapes model
 - Original
 
 ![image](https://user-images.githubusercontent.com/105235140/235952311-53b00472-74dc-4a03-97c3-a07ff8735333.png)
