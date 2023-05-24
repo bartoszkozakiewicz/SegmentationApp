@@ -6,14 +6,14 @@ COPY main.py .
 COPY model_addons.py .
 COPY app.py .
 
-COPY templates .
-COPY static .
-COPY model .
-COPY __pycache__ .
+COPY templates ./templates
+COPY static ./static
+COPY model ./model
+COPY __pycache__ ./__pycache__
 
 COPY requirements.txt .
 
-RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y --fix-missing
 
 EXPOSE 5000
 

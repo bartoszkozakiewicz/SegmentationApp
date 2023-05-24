@@ -99,7 +99,7 @@ id2color = { label.id : np.asarray(label.color) for label in labels }
 
 
 #Load models
-unet_model = load_model("model/UNETD15P5.h5", compile=False)
+unet_model = load_model("./model/UNETD15P5.h5", compile=False)
 
 
 #IMAGES SEGMENTATION

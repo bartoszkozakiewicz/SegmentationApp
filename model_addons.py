@@ -133,6 +133,6 @@ def label_to_color_image(label):
 
   return colormap[label]
 
-MODEL1 = DeepLabModel("model/deeplab_mnv3_large_cityscapes_trainfine_2019_11_15.tar.gz") #Mobilnet
-MODEL2 = DeepLabModel("model/deeplabv3_cityscapes_train_2018_02_06.tar.gz")#Xception_weak
-MODEL3 = DeepLabModel("model/deeplab_cityscapes_xception71_trainvalfine_2018_09_08.tar.gz")#Xcep71
+MODEL1 = DeepLabModel("./model/deeplab_mnv3_large_cityscapes_trainfine_2019_11_15.tar.gz") #Mobilnet
+MODEL2 = DeepLabModel("./model/deeplabv3_cityscapes_train_2018_02_06.tar.gz")#Xception_weak
+MODEL3 = DeepLabModel("./model/deeplab_cityscapes_xception71_trainvalfine_2018_09_08.tar.gz")#Xcep71
